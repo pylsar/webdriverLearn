@@ -1,33 +1,23 @@
-// const webdriver = require('selenium-webdriver');
-// const chrome = require('selenium-webdriver/chrome');
-// const firefox = require('selenium-webdriver/firefox')
 
-// var By = webdriver.By;
-// var until = webdriver.until;
- 
-// let driver = new webdriver.Builder() .forBrowser(webdriver.Browser.FIREFOX).build();
+const { Builder, By, Key, until } = require('selenium-webdriver');
 
-// driver.get('http://library-app.firebaseapp.com') ;
+(async function checkElements() {
+	// Создаем экземпляр драйвера
+	let driver = await new Builder().forBrowser('chrome').build(); // или другой браузер
 
+	try {
+		// Открываем нужный URL
+		await driver.get('https://incity.ru/incity/');
 
-// driver.findElements(By.css('input'));
+		await driver.findElement(By.css('.btn-search')).click();
+		let inputField = await driver.wait(until.elementIsVisible(driver.findElement(By.id('title-search-input'))), 1000);
 
-
-
-// driver.sleep(10000);
-// driver.quit();
-
-
-
-const { Builder, Browser, By, Key, until } = require('selenium-webdriver');
-
-(async function example() {
-  let driver = await new Builder().forBrowser(Browser.FIREFOX).build()
-  try {
-    await driver.get('http://library-app.firebaseapp.com')
-    await driver.findElement(By.className('lead')).sendKeys('webdriver', Key.RETURN)
-    await driver.wait(until.titleIs('Demo Home Page'), 1000)
-  } finally {
-    await driver.quit()
-  }
-})()
+		// Очищаем поле ввода (если нужно) и вставляем значение
+		await inputField.clear(); // очистка поля
+		await inputField.sendKeys('Шапка-бини'); // вставка значения
+		await inputField.sendKeys(Key.ENTER);
+	} finally {
+		// Закрываем драйвер после завершения
+		await driver.quit();
+	}
+})();
